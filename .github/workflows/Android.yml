@@ -34,4 +34,4 @@ jobs:
       with:
         name: retroarch-android-${{ steps.slug.outputs.sha8 }}
         path: |
-          pkg/android/phoenix/build/outputs/bundle/debug/phoenix-debug.aab
+          pkg/android/phoenix/build/outputs/bundle/**/*.aab
