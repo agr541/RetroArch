@@ -64,4 +64,4 @@ jobs:
       with:
         name: retroarch-play-${{ steps.slug.outputs.sha8 }}
         path: |
-          pkg/android/phoenix/build/outputs/bundle/**/*PlayStoreNormalRelease*.aab
+          pkg/android/phoenix/build/outputs/bundle/**/*.aab
