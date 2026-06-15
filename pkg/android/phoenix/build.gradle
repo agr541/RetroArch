@@ -23,11 +23,7 @@ allprojects {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.github.triplet.play'
-play {
-    serviceAccountCredentials = file("play-service-account.json")
-    defaultToAppBundles = true
-}
+
 android {
   compileSdkVersion 31
   buildToolsVersion "30.0.3"
