@@ -18,20 +18,42 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - name: Compile AAB
+    - name: Restore keystore
+      run: |
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
+    - name: Build signed Play AAB
       run: |
         cd pkg/android/phoenix
-        ./gradlew bundleRelease
+        ./gradlew bundlePlayStoreNormalRelease \
+          -PRELEASE_STORE_FILE=../release.keystore \
+          -PRELEASE_STORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}" \
+          -PRELEASE_KEY_ALIAS="${{ secrets.KEY_ALIAS }}" \
+          -PRELEASE_KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
+
         find . -iname "*.aab" -exec ls -l "{}" \;
 
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
+    - name: Restore Play service account
+      run: |
+        echo '${{ secrets.PLAY_STORE_JSON }}' > play-service-account.json
+
+    - name: Upload to Play Internal Testing
+      run: |
+        cd pkg/android/phoenix
+        ./gradlew publishPlayStoreNormalReleaseBundle \
+          -Pandroid.injected.signing.store.file=../release.keystore \
+          -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_PASSWORD }}" \
+          -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
+          -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}"
+
     - uses: actions/upload-artifact@v4
       with:
-        name: retroarch-android-${{ steps.slug.outputs.sha8 }}
+        name: retroarch-play-${{ steps.slug.outputs.sha8 }}
         path: |
-          pkg/android/phoenix/build/outputs/bundle/**/*.aab
+          pkg/android/phoenix/build/outputs/bundle/**/*PlayStoreNormalRelease*.aab
