@@ -24,7 +24,7 @@ jobs:
       run: |
         echo "${{ secrets.KEYSTORE_BASE64 }}" \
         | tr -d '\n\r ' \
-        | base64 -d > release.keystore
+        | base64 -d > pkg/android/release.keystore
         
     - name: Build signed Play AAB
       run: |
