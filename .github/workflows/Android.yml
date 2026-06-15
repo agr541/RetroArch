@@ -23,7 +23,7 @@ jobs:
     - name: Compile AAB
       run: |
         cd pkg/android/phoenix
-        ./gradlew bundleNormalRelease
+        ./gradlew bundleRelease
         find . -iname "*.aab" -exec ls -l "{}" \;
 
     - name: Get short SHA
