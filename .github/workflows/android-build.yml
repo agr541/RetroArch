@@ -1,26 +1,51 @@
-name: Build AAB
+name: CI Android
 
 on:
+  push:
+  pull_request:
   workflow_dispatch:
+  repository_dispatch:
+    types: [run_build]
+
+permissions:
+  contents: read
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
 
-      - uses: android-actions/setup-android@v3
+    - name: Build AAB
+      run: |
+        cd pkg/android/phoenix
+        ./gradlew clean bundleDebug
+        find . -iname "*.aab" -exec ls -l "{}" \;
 
-      - run: yes | sdkmanager --licenses
+    - name: Upload AAB to Play Console (Internal Track)
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        packageName: com.your.package.name
+        releaseFiles: pkg/android/phoenix/build/outputs/bundle/debug/*.aab
+        track: internal
+        status: completed
 
-      - run: sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+    - name: Get short SHA
+      id: slug
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
-      - run: chmod +x ./gradlew
-
-      - run: ./gradlew bundleRelease
+    - uses: actions/upload-artifact@v4
+      with:
+        name: android-aab-${{ steps.slug.outputs.sha8 }}
+        path: pkg/android/phoenix/build/outputs/bundle/debug/*.aab
