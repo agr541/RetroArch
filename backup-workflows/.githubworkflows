@@ -1,0 +1,37 @@
+name: CI Android
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [run_build]
+
+permissions:
+  contents: read
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Compile AAB
+      run: |
+        cd pkg/android/phoenix
+        ./gradlew bundleDebug
+        find . -iname "*.aab" -exec ls -l "{}" \;
+
+    - name: Get short SHA
+      id: slug
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: retroarch-android-${{ steps.slug.outputs.sha8 }}
+        path: |
+          pkg/android/phoenix/build/outputs/bundle/debug/phoenix-debug.aab
