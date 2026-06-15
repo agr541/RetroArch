@@ -20,19 +20,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Compile RA
+    - name: Compile AAB
       run: |
         cd pkg/android/phoenix
-        ./gradlew assembleDebug
-        find . -iname "*.apk" -exec ls -l "{}" \;
+        ./gradlew bundleDebug
+        find . -iname "*.aab" -exec ls -l "{}" \;
 
     - name: Get short SHA
       id: slug
-      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
     - uses: actions/upload-artifact@v4
       with:
         name: retroarch-android-${{ steps.slug.outputs.sha8 }}
         path: |
-          pkg/android/phoenix/build/outputs/apk/normal/debug/phoenix-normal-debug.apk
-          pkg/android/phoenix/build/outputs/apk/aarch64/debug/phoenix-aarch64-debug.apk
+          pkg/android/phoenix/build/outputs/bundle/debug/phoenix-debug.aab
