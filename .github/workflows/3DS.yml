@@ -1,7 +1,6 @@
 name: CI 3DS
 
 on:
-  push:
   pull_request:
   repository_dispatch:
     types: [run_build]
