@@ -51,6 +51,7 @@ jobs:
         echo '${{ secrets.PLAY_STORE_JSON }}' > play-service-account.json
 
     - name: Upload to Play Internal Testing
+      continue-on-error: true
       run: |
         cd pkg/android/phoenix
         ./gradlew publishPlayStoreNormalReleaseBundle \
