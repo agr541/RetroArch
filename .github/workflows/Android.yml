@@ -25,7 +25,12 @@ jobs:
         echo "${{ secrets.KEYSTORE_BASE64 }}" \
         | tr -d '\n\r ' \
         | base64 -d > pkg/android/release.keystore
-        
+    
+    - name: Verify keystore
+      run: |
+        keytool -list -keystore pkg/android/release.keystore \
+        -storepass "${{ secrets.KEYSTORE_PASSWORD }}"   
+    
     - name: Build signed Play AAB
       run: |
         cd pkg/android/phoenix
