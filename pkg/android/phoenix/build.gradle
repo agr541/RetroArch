@@ -1,3 +1,5 @@
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+
 buildscript {
     repositories {
         google()
@@ -34,15 +36,6 @@ allprojects {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: "com.github.triplet.play"
-
-if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
-
-    play {
-        serviceAccountCredentials = file(SERVICE_ACCOUNT_FILE)
-        track = "internal"   // or beta / production
-    }
-}
 
 android {
     namespace "com.agr541.retroarch"
@@ -206,8 +199,6 @@ if(dynamicFeatures.exists()) {
 int getPlayStoreVersionCode() {
     def baseVersion = getManifestAttribute("versionCode").toLong()
     def increment = (System.currentTimeMillis() / 1000L).toLong()
-
-    println baseVersion + increment
     return baseVersion + increment
 }
 
@@ -228,3 +219,15 @@ tasks.register("outputVersionCode") {
         println getPlayStoreVersionCode()
     }
 }
+
+
+apply plugin: "com.github.triplet.play"
+
+if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
+    play {
+        serviceAccountCredentials = file(SERVICE_ACCOUNT_FILE)
+        track = "internal"   // or beta / production
+        releaseStatus =  ReleaseStatus.DRAFT
+    }
+}
+
