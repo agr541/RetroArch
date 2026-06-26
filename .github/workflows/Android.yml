@@ -57,6 +57,7 @@ jobs:
         cd pkg/android/phoenix
         echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > play-service-account.json
 
+
     - name: Upload to Play Internal Testing
       continue-on-error: true
       run: |
@@ -65,7 +66,8 @@ jobs:
           -Pandroid.injected.signing.store.file=../release.keystore \
           -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_PASSWORD }}" \
           -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
-          -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}"
+          -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}" \
+          -PSERVICE_ACCOUNT_FILE="play-service-account.json"
 
     - uses: actions/upload-artifact@v4
       with:
