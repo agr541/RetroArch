@@ -24,9 +24,12 @@ allprojects {
     props.each { prop ->
         project.ext.set(prop.key, prop.value)
     }
-    props.load(new FileInputStream(new File(project.rootDir, "local.properties")))
-    props.each { prop ->
-        project.ext.set(prop.key, prop.value)
+    def localProps = new File(project.rootDir, "local.properties")
+    if(localProps.exists()) {
+        props.load(new FileInputStream(localProps))
+        props.each { prop ->
+            project.ext.set(prop.key, prop.value)
+        }
     }
 }
 
@@ -201,11 +204,10 @@ if(dynamicFeatures.exists()) {
 }
 
 int getPlayStoreVersionCode() {
-    def baseVersion = getManifestAttribute("versionCode").toInteger()
-    def baseTime = 1609632000
-    def halfWeek = 302400
-    def increment = (System.currentTimeSeconds() - baseTime) / halfWeek
+    def baseVersion = getManifestAttribute("versionCode").toLong()
+    def increment = (System.currentTimeMillis() / 1000L).toLong()
 
+    println baseVersion + increment
     return baseVersion + increment
 }
 
