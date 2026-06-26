@@ -146,6 +146,9 @@ LOCAL_C_INCLUDES := \
    $(LOCAL_PATH)/$(RARCH_DIR)/libretro-common/include \
    $(LOCAL_PATH)/$(RARCH_DIR)/deps
 
+ifeq ($(HAVE_CHEEVOS),1)
+INCLUDE_DIRS += -I$(LOCAL_PATH)/$(DEPS_DIR)/rcheevos/include
+endif
 # -------------------------------------------------------
 # VULKAN INCLUDES
 # -------------------------------------------------------
