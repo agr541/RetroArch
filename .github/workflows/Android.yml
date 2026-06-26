@@ -36,21 +36,18 @@ jobs:
       run: |
         keytool -list -keystore pkg/android/release.keystore \
         -storepass "${{ secrets.KEYSTORE_PASSWORD }}"
+#
+#    - name: Build signed Play AAB
+#      run: |
+#        cd pkg/android/phoenix
+#        ./gradlew bundlePlayStoreNormalRelease \
+#          -PRELEASE_STORE_FILE=../release.keystore \
+#          -PRELEASE_STORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}" \
+#          -PRELEASE_KEY_ALIAS="${{ secrets.KEY_ALIAS }}" \
+#          -PRELEASE_KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
+#
+#        find . -iname "*.aab" -exec ls -l "{}" \;
 
-    - name: Build signed Play AAB
-      run: |
-        cd pkg/android/phoenix
-        ./gradlew bundlePlayStoreNormalRelease \
-          -PRELEASE_STORE_FILE=../release.keystore \
-          -PRELEASE_STORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}" \
-          -PRELEASE_KEY_ALIAS="${{ secrets.KEY_ALIAS }}" \
-          -PRELEASE_KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
-
-        find . -iname "*.aab" -exec ls -l "{}" \;
-
-    - name: Get short SHA
-      id: slug
-      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
     - name: Restore Play service account
       run: |
@@ -68,6 +65,11 @@ jobs:
           -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
           -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}" \
           -PSERVICE_ACCOUNT_FILE="play-service-account.json"
+
+
+    - name: Get short SHA
+      id: slug
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
     - uses: actions/upload-artifact@v4
       with:
