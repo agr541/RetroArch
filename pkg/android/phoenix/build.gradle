@@ -195,7 +195,7 @@ if(dynamicFeatures.exists()) {
 
 String getPlayStoreVersionName() {
     def versionName = getManifestAttribute("versionName")
-    return "$versionName (${new Date().format("yyyy-MM-dd")})"
+    return "$versionName (${new Date().format("yyyyMMddHHmmss")})"
 }
 
 String getManifestAttribute(String attribute) {
