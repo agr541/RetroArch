@@ -54,6 +54,7 @@ jobs:
 
     - name: Restore Play service account
       run: |
+        cd pkg/android/phoenix
         echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > play-service-account.json
 
     - name: Upload to Play Internal Testing
