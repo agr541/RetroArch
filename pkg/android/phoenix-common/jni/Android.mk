@@ -212,6 +212,9 @@ ifeq ($(HAVE_SAF),1)
    DEFINES += -DHAVE_SAF
 endif
 
+DEFINES += -DFLAC_PACKAGE_VERSION="\"retroarch\"" \
+	   -DHAVE_LROUND \
+	   -DFLAC__HAS_OGG=0
 # ----------------------------
 # Compiler flags
 # ----------------------------
@@ -257,6 +260,7 @@ ifeq ($(HAVE_BUILTINSMBCLIENT),1)
       -I$(LOCAL_PATH)/$(DEPS_DIR)/libsmb2/include \
       -I$(LOCAL_PATH)/$(DEPS_DIR)/libsmb2/include/smb2
 endif
+
 
 LOCAL_CFLAGS   += $(INCLUDE_DIRS)
 LOCAL_CPPFLAGS += $(INCLUDE_DIRS)
