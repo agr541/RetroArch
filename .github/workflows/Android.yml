@@ -56,7 +56,6 @@ jobs:
 
 
     - name: Upload to Play Internal Testing
-      continue-on-error: true
       run: |
         cd pkg/android/phoenix
         ./gradlew publishPlayStoreNormalReleaseBundle \
