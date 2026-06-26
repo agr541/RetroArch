@@ -2,10 +2,14 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
+
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath "com.github.triplet.gradle:play-publisher:3.10.1"
+
     }
 }
 
@@ -23,6 +27,12 @@ allprojects {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: "com.github.triplet.play"
+
+play {
+    serviceAccountCredentials = file("play-service-account.json")
+    track = "internal"   // or beta / production
+}
 
 android {
     namespace "com.agr541.retroarch"
