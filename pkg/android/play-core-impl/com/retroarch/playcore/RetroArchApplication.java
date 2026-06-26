@@ -1,5 +1,5 @@
 package com.retroarch.playcore;
 
-import com.google.android.play.core.splitcompat.SplitCompatApplication;
+import android.app.Application;
 
-public class RetroArchApplication extends SplitCompatApplication {}
+public class RetroArchApplication extends Application {}
