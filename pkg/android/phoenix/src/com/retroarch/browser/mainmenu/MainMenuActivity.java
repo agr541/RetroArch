@@ -1,6 +1,6 @@
 package com.retroarch.browser.mainmenu;
 
-import com.agr541retroarch.BuildConfig;
+import com.agr541.retroarch.BuildConfig;
 import com.retroarch.browser.preferences.util.UserPreferences;
 import com.retroarch.browser.retroactivity.RetroActivityFuture;
 

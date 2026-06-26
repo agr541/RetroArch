@@ -14,7 +14,7 @@
  */
 package com.retroarch.browser.retroactivity;
 
-import com.agr541retroarch.BuildConfig;
+import com.agr541.retroarch.BuildConfig;
 import com.retroarch.browser.preferences.util.UserPreferences;
 import com.retroarch.playcore.PlayCoreManager;
 
