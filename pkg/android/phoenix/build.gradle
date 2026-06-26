@@ -59,7 +59,6 @@ android {
             }
         }
 
-        versionCode System.currentTimeSeconds().toInteger()
         versionName "${getManifestAttribute("versionName")}_GIT"
     }
 
@@ -96,7 +95,6 @@ android {
         playStoreNormal {
             minSdkVersion 21
             targetSdkVersion 35
-            versionCode getPlayStoreVersionCode()
             versionName getPlayStoreVersionName()
 
             resValue "string", "app_name", "RetroArch"
@@ -111,7 +109,6 @@ android {
         playStorePlus {
             minSdkVersion 26
             targetSdkVersion 35
-            versionCode getPlayStoreVersionCode()
             versionName getPlayStoreVersionName()
 
             applicationIdSuffix '.aarch64'
@@ -196,12 +193,6 @@ if(dynamicFeatures.exists()) {
     apply from: "dynamic_features.gradle"
 }
 
-int getPlayStoreVersionCode() {
-    def baseVersion = getManifestAttribute("versionCode").toLong()
-    def increment = (System.currentTimeMillis() / 1000L).toLong()
-    return baseVersion + increment
-}
-
 String getPlayStoreVersionName() {
     def versionName = getManifestAttribute("versionName")
     return "$versionName (${new Date().format("yyyy-MM-dd")})"
@@ -214,13 +205,6 @@ String getManifestAttribute(String attribute) {
     }.value
 }
 
-tasks.register("outputVersionCode") {
-    doLast {
-        println getPlayStoreVersionCode()
-    }
-}
-
-
 apply plugin: "com.github.triplet.play"
 
 if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
@@ -228,6 +212,7 @@ if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
         serviceAccountCredentials = file(SERVICE_ACCOUNT_FILE)
         track = "internal"   // or beta / production
         releaseStatus =  ReleaseStatus.DRAFT
+        resolutionStrategy = com.github.triplet.gradle.androidpublisher.ResolutionStrategy.AUTO
     }
 }
 
