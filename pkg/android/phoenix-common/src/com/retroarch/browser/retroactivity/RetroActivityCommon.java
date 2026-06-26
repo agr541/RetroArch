@@ -139,7 +139,7 @@ public class RetroActivityCommon extends NativeActivity
     cleanupSymlinks();
     updateSymlinks();
 
-    registerReceiver(mUsbPermissionReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+    registerReceiver(mUsbPermissionReceiver, new IntentFilter(ACTION_USB_PERMISSION), Context.RECEIVER_NOT_EXPORTED);
     ((InputManager) getSystemService(Context.INPUT_SERVICE))
             .registerInputDeviceListener(this, null);
     PlayCoreManager.getInstance().onCreate(this);
