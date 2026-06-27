@@ -38,7 +38,7 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.agr541.retroarch"
 
-    compileSdkVersion 36
+    compileSdk 36
     ndkVersion "22.0.7026061"
 
     buildFeatures {
@@ -54,12 +54,13 @@ android {
     flavorDimensions "variant"
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 35
+        minSdk 16
+        targetSdk 35
 
         externalNativeBuild {
             ndkBuild {
                 arguments "-j${Runtime.runtime.availableProcessors()}", "APP_PLATFORM=android-21"
+                abiFilters "arm64-v8a", "x86_64"
             }
         }
 
@@ -82,11 +83,15 @@ android {
             resValue "string", "app_name", "RetroArch (AArch64)"
             buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
             dimension "variant"
+
+            ndk {
+                abiFilters "arm64-v8a"
+            }
         }
 
         playStoreNormal {
-            minSdkVersion 21
-            targetSdkVersion 35
+            minSdk 21
+            targetSdk 35
             versionName getPlayStoreVersionName()
 
             resValue "string", "app_name", "RetroArch"
@@ -95,14 +100,18 @@ android {
         }
 
         playStorePlus {
-            minSdkVersion 26
-            targetSdkVersion 35
+            minSdk 26
+            targetSdk 35
             versionName getPlayStoreVersionName()
 
             applicationIdSuffix '.aarch64'
             resValue "string", "app_name", "RetroArch Plus"
             buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
             dimension "variant"
+
+            ndk {
+                abiFilters "arm64-v8a"
+            }
         }
     }
 
@@ -131,6 +140,7 @@ android {
 
         playStorePlus {
             java.srcDirs += ['../play-core-impl']
+            res.srcDirs += ['res64']
         }
     }
 
@@ -190,8 +200,7 @@ apply plugin: "com.github.triplet.play"
 if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
     play {
         serviceAccountCredentials = file(SERVICE_ACCOUNT_FILE)
-        track = "internal"   // or beta / production
-//        releaseStatus =  ReleaseStatus.DRAFT
+        track = "internal"
         resolutionStrategy = com.github.triplet.gradle.androidpublisher.ResolutionStrategy.AUTO
     }
 }
