@@ -1,4 +1,4 @@
-import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import static android.os.Build.VERSION_CODES
 
 buildscript {
     repositories {
@@ -9,7 +9,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath "com.github.triplet.gradle:play-publisher:3.10.1"
+        classpath "com.github.triplet.gradle:play-publisher:4.0.0"
     }
 }
 
@@ -38,7 +38,7 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.agr541.retroarch"
 
-    compileSdk 36
+    compileSdkVersion CUR_DEVELOPMENT
     ndkVersion "22.0.7026061"
 
     buildFeatures {
@@ -54,8 +54,8 @@ android {
     flavorDimensions "variant"
 
     defaultConfig {
-        minSdk 16
-        targetSdk 35
+        minSdk VERSION_CODES.JELLY_BEAN
+        targetSdk VERSION_CODES.CUR_DEVELOPMENT
 
         externalNativeBuild {
             ndkBuild {
@@ -90,19 +90,23 @@ android {
         }
 
         playStoreNormal {
-            minSdk 21
-            targetSdk 35
-            versionName getPlayStoreVersionName()
+            minSdk VERSION_CODE.LOLLIPOP
+            targetSdk VERSION_CODE.CUR_DEVELOPMENT
+            versionName getPlayStoreVersionName2()
 
             resValue "string", "app_name", "RetroArch"
             buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
             dimension "variant"
+
+            ndk {
+                abiFilters "arm64-v8a"
+            }
         }
 
         playStorePlus {
-            minSdk 26
-            targetSdk 35
-            versionName getPlayStoreVersionName()
+            minSdk VERSION_CODE.O
+            targetSdk VERSION_CODE.CUR_DEVELOPMENT
+            versionName getPlayStoreVersionName2()
 
             applicationIdSuffix '.aarch64'
             resValue "string", "app_name", "RetroArch Plus"
@@ -174,7 +178,7 @@ android {
 
 dependencies {
     implementation "com.google.android.play:app-update:2.1.0"
-    implementation "com.google.android.play:review:2.0.1"
+    implementation "com.google.android.play:review:2.0.2"
     implementation "com.google.android.play:feature-delivery:2.1.0"
 }
 
@@ -183,16 +187,31 @@ if(dynamicFeatures.exists()) {
     apply from: "dynamic_features.gradle"
 }
 
-String getPlayStoreVersionName() {
+String getPlayStoreVersionName2() {
     def versionName = getManifestAttribute("versionName")
     return "$versionName"
 }
 
 String getManifestAttribute(String attribute) {
-    def manifest = new XmlParser().parse("${project.projectDir}/AndroidManifest.xml")
-    return manifest.attributes().find {
-        ((String) it.key).contains(attribute)
-    }.value
+    def file = new File("${project.projectDir}/AndroidManifest.xml")
+
+    def factory = DocumentBuilderFactory.newInstance()
+    factory.setNamespaceAware(true)
+
+    def builder = factory.newDocumentBuilder()
+    def doc = builder.parse(file)
+
+    def manifestNode = doc.getElementsByTagName("manifest").item(0)
+    def attrs = manifestNode.getAttributes()
+
+    for (int i = 0; i < attrs.getLength(); i++) {
+        def attr = attrs.item(i)
+        if (attr.getNodeName().contains(attribute)) {
+            return attr.getNodeValue()
+        }
+    }
+
+    return null
 }
 
 apply plugin: "com.github.triplet.play"
