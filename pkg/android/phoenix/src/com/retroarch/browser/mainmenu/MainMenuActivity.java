@@ -7,11 +7,13 @@ import com.retroarch.browser.retroactivity.RetroActivityFuture;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.net.Uri;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import android.util.Log;
 public final class MainMenuActivity extends PreferenceActivity
 {
 	final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+	final private int REQUEST_CODE_MANAGE_STORAGE = 125;
 	public static String PACKAGE_NAME;
 	boolean checkPermissions = false;
 
@@ -40,7 +43,7 @@ public final class MainMenuActivity extends PreferenceActivity
 
 	private boolean addPermission(List<String> permissionsList, String permission)
 	{
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
 		{
 			if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
 			{
@@ -57,54 +60,82 @@ public final class MainMenuActivity extends PreferenceActivity
 
 	public void checkRuntimePermissions()
 	{
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
 		{
-			// Android 6.0+ needs runtime permission checks
+			if (!Environment.isExternalStorageManager())
+			{
+				checkPermissions = true;
+				showMessageOKCancel("RetroArch needs 'All Files Access' to manage your cores and game data. Please grant this permission on the next screen.",
+					new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							if (which == AlertDialog.BUTTON_POSITIVE)
+							{
+								try
+								{
+									Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+									intent.addCategory("android.intent.category.DEFAULT");
+									intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
+									startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE);
+								}
+								catch (Exception e)
+								{
+									Intent intent = new Intent();
+									intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+									startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE);
+								}
+							}
+						}
+					});
+				return;
+			}
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+		{
 			List<String> permissionsNeeded = new ArrayList<String>();
 			final List<String> permissionsList = new ArrayList<String>();
 
-			if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
-				permissionsNeeded.add("Read External Storage");
-			if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-				permissionsNeeded.add("Write External Storage");
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+			{
+				if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_IMAGES))
+					permissionsNeeded.add("Images");
+				if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_VIDEO))
+					permissionsNeeded.add("Video");
+				if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_AUDIO))
+					permissionsNeeded.add("Audio");
+			}
+			else
+			{
+				if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+					permissionsNeeded.add("Read External Storage");
+				if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+					permissionsNeeded.add("Write External Storage");
+			}
 
 			if (permissionsList.size() > 0)
 			{
 				checkPermissions = true;
 
-				if (permissionsNeeded.size() > 0)
-				{
-					// Need Rationale
-					Log.i("MainMenuActivity", "Need to request external storage permissions.");
+				String message = "You need to grant access to " + permissionsNeeded.get(0);
+				for (int i = 1; i < permissionsNeeded.size(); i++)
+					message = message + ", " + permissionsNeeded.get(i);
 
-					String message = "You need to grant access to " + permissionsNeeded.get(0);
-
-					for (int i = 1; i < permissionsNeeded.size(); i++)
-						message = message + ", " + permissionsNeeded.get(i);
-
-					showMessageOKCancel(message,
-						new DialogInterface.OnClickListener()
+				showMessageOKCancel(message,
+					new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
 						{
-							@Override
-							public void onClick(DialogInterface dialog, int which)
+							if (which == AlertDialog.BUTTON_POSITIVE)
 							{
-								if (which == AlertDialog.BUTTON_POSITIVE)
-								{
-									requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-											REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-
-									Log.i("MainMenuActivity", "User accepted request for external storage permissions.");
-								}
+								requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+										REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 							}
-						});
-				}
-				else
-				{
-					requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-						REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-
-					Log.i("MainMenuActivity", "Requested external storage permissions.");
-				}
+						}
+					});
 			}
 		}
 
@@ -119,10 +150,8 @@ public final class MainMenuActivity extends PreferenceActivity
 		Intent retro = new Intent(this, RetroActivityFuture.class);
 
 		if (RetroActivityFuture.isRunning) {
-			// RetroActivity is already running - just bring it to front
 			retro.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		} else {
-			// RetroActivity not running - full setup with parameters
 			retro.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -140,6 +169,18 @@ public final class MainMenuActivity extends PreferenceActivity
 		finish();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (requestCode == REQUEST_CODE_MANAGE_STORAGE)
+		{
+			checkRuntimePermissions();
+		}
+		else
+		{
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
@@ -158,7 +199,6 @@ public final class MainMenuActivity extends PreferenceActivity
 						Log.i("MainMenuActivity", "Permission: " + permissions[i] + " was not granted.");
 					}
 				}
-
 				break;
 			default:
 				super.onRequestPermissionsResult(requestCode, permissions, grantResults);

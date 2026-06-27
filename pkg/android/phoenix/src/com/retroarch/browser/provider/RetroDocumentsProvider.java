@@ -87,6 +87,7 @@ public class RetroDocumentsProvider extends DocumentsProvider {
             core.add(Root.COLUMN_ICON, R.mipmap.ic_launcher);
 
             final File USER_DIR = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" + getContext().getPackageName() + "/files/RetroArch");
+            if (!USER_DIR.exists()) USER_DIR.mkdirs();
             final MatrixCursor.RowBuilder user = result.newRow();
             user.add(Root.COLUMN_ROOT_ID, getDocIdForFile(USER_DIR));
             user.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(USER_DIR));
@@ -153,8 +154,11 @@ public class RetroDocumentsProvider extends DocumentsProvider {
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder) throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
         final File parent = getFileForDocId(parentDocumentId);
-        for (File file : parent.listFiles()) {
-            includeFile(result, null, file);
+        File[] files = parent.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                includeFile(result, null, file);
+            }
         }
         result.setNotificationUri(getContext().getContentResolver(), DocumentsContract.buildTreeDocumentUri(DOCUMENTS_AUTHORITY, parentDocumentId));
         return result;
@@ -182,10 +186,11 @@ public class RetroDocumentsProvider extends DocumentsProvider {
 
     @Override
     public String createDocument(String parentDocumentId, String mimeType, String displayName) throws FileNotFoundException {
-        File newFile = new File(parentDocumentId, displayName);
+        File parent = getFileForDocId(parentDocumentId);
+        File newFile = new File(parent, displayName);
         int noConflictId = 2;
         while (newFile.exists()) {
-            newFile = new File(parentDocumentId, displayName + " (" + noConflictId++ + ")");
+            newFile = new File(parent, displayName + " (" + noConflictId++ + ")");
         }
         try {
             boolean succeeded;
@@ -213,8 +218,11 @@ public class RetroDocumentsProvider extends DocumentsProvider {
 
     void rm_r (File file) throws FileNotFoundException{
         if(file.isDirectory()){
-            for(File child : file.listFiles()) {
-                rm_r(child);
+            File[] files = file.listFiles();
+            if (files != null) {
+                for(File child : files) {
+                    rm_r(child);
+                }
             }
         }
         if(!file.delete()){
@@ -253,9 +261,12 @@ public class RetroDocumentsProvider extends DocumentsProvider {
             }
             if (isInsideHome) {
                 if (file.isDirectory()) {
-                    Collections.addAll(pending, file.listFiles());
+                    File[] files = file.listFiles();
+                    if (files != null) {
+                        Collections.addAll(pending, files);
+                    }
                 } else {
-                    if (file.getName().toLowerCase().contains(query)) {
+                    if (file.getName().toLowerCase().contains(query.toLowerCase())) {
                         includeFile(result, null, file);
                     }
                 }
@@ -325,7 +336,8 @@ public class RetroDocumentsProvider extends DocumentsProvider {
         } else {
             if (file.canWrite()) flags |= Document.FLAG_SUPPORTS_WRITE | Document.FLAG_SUPPORTS_RENAME;
         }
-        if (file.getParentFile().canWrite()) flags |= Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_MOVE;
+        File parentFile = file.getParentFile();
+        if (parentFile != null && parentFile.canWrite()) flags |= Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_MOVE;
 
         final String displayName = file.getName();
         final String mimeType = getMimeType(file);
