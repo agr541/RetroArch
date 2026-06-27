@@ -5,13 +5,11 @@ buildscript {
         google()
         mavenCentral()
         gradlePluginPortal()
-
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.2'
         classpath "com.github.triplet.gradle:play-publisher:3.10.1"
-
     }
 }
 
@@ -65,11 +63,14 @@ android {
             }
         }
 
+        ndk {
+            abiFilters "arm64-v8a", "x86_64"
+        }
+
         versionName "${getManifestAttribute("versionName")}_GIT"
     }
 
     productFlavors {
-
         normal {
             resValue "string", "app_name", "RetroArch"
             buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
@@ -81,21 +82,6 @@ android {
             resValue "string", "app_name", "RetroArch (AArch64)"
             buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
             dimension "variant"
-
-            ndk {
-                abiFilters "arm64-v8a", "x86_64"
-            }
-        }
-
-        ra32 {
-            applicationIdSuffix '.ra32'
-            resValue "string", "app_name", "RetroArch (32-bit)"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
-            dimension "variant"
-
-            ndk {
-                abiFilters "armeabi-v7a", "x86"
-            }
         }
 
         playStoreNormal {
@@ -137,10 +123,6 @@ android {
         aarch64 {
             java.srcDirs += ['../play-core-stub']
             res.srcDirs = ['res', 'res64']
-        }
-
-        ra32 {
-            java.srcDirs += ['../play-core-stub']
         }
 
         playStoreNormal {
