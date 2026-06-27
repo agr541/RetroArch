@@ -40,7 +40,7 @@ ifeq ($(TARGET_ARCH),x86)
 endif
 
 ifeq ($(TARGET_ARCH),x86_64)
-   DEFINES += -DANDROID_X86_64 -DHAVE_SSSE3 -D__x86_64__
+   DEFINES += -DANDROID_X64 DANDROID_X86_64 -DHAVE_SSSE3 -D__x86_64__
 endif
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
@@ -287,9 +287,7 @@ ifeq ($(HAVE_VULKAN),1)
    LOCAL_SRC_FILES += $(RARCH_DIR)/griffin/griffin_glslang.cpp
 endif
 
-# ----------------------------
-# Final
-# ----------------------------
+LOCAL_LDLIBS += -lOpenSLES -lz
 
 ifneq ($(SANITIZER),)
    LOCAL_CFLAGS   += -g -fsanitize=$(SANITIZER) -fno-omit-frame-pointer
