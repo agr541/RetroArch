@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Declare attribution tags for the aarch64 flavor (Android 11+) -->
+    <attribution
+        android:tag="attributionTag"
+        android:label="@string/app_name" />
+
+    <attribution
+        android:tag="com.agr541.retroarch.aarch64"
+        android:label="@string/app_name" />
+
+</manifest>
