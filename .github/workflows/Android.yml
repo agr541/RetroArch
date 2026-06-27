@@ -33,18 +33,6 @@ jobs:
       run: |
         keytool -list -keystore pkg/android/release.keystore \
         -storepass "${{ secrets.KEYSTORE_PASSWORD }}"
-#
-#    - name: Build signed Play AAB
-#      run: |
-#        cd pkg/android/phoenix
-#        ./gradlew bundlePlayStoreNormalRelease \
-#          -PRELEASE_STORE_FILE=../release.keystore \
-#          -PRELEASE_STORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}" \
-#          -PRELEASE_KEY_ALIAS="${{ secrets.KEY_ALIAS }}" \
-#          -PRELEASE_KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
-#
-#        find . -iname "*.aab" -exec ls -l "{}" \;
-
 
     - name: Restore Play service account
       run: |
