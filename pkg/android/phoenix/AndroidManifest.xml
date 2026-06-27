@@ -15,7 +15,6 @@
     <!-- Declaring multiple tags to satisfy flavor-specific IDs and literal requests -->
     <attribution android:tag="attributionTag" android:label="@string/app_name" />
     <attribution android:tag="${applicationId}" android:label="@string/app_name" />
-    <attribution android:tag="com.agr541.retroarch" android:label="@string/app_name" />
 
     <!-- Storage permissions for older Android versions -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
@@ -44,7 +43,6 @@
         android:hasCode="true"
         android:appCategory="game"
         android:banner="@drawable/banner"
-        android:extractNativeLibs="true"
         android:requestLegacyExternalStorage="true"
         tools:ignore="UnusedAttribute">
 
