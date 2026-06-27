@@ -211,7 +211,7 @@ if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
     play {
         serviceAccountCredentials = file(SERVICE_ACCOUNT_FILE)
         track = "internal"   // or beta / production
-        releaseStatus =  ReleaseStatus.DRAFT
+//        releaseStatus =  ReleaseStatus.DRAFT
         resolutionStrategy = com.github.triplet.gradle.androidpublisher.ResolutionStrategy.AUTO
     }
 }
