@@ -85,6 +85,12 @@
 /* Define this macro to prevent cheevos from being deactivated when they trigger. */
 #undef CHEEVOS_DONT_DEACTIVATE
 
+#ifdef __cplusplus
+#define ATOMIC_INIT  {0}
+#else
+#define ATOMIC_INIT  0
+#endif
+
 static rcheevos_locals_t rcheevos_locals =
 {
    NULL, /* client */
@@ -94,10 +100,10 @@ static rcheevos_locals_t rcheevos_locals =
     * under CXX_BUILD (std::atomic<int>) this list-initializes via the
     * converting constructor rather than the deleted copy constructor;
     * for the C backends {0} is an equivalent scalar initializer. */
-   {0},
+   ATOMIC_INIT,
    /* load_generation (atomic). Starts at 0; bumped by
     * rcheevos_unload and rcheevos_load. */
-   {0},
+   ATOMIC_INIT,
 #endif
    "",   /* user_agent_prefix */
    "",   /* user_agent_core */
