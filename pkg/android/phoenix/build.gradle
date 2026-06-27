@@ -1,5 +1,3 @@
-import static android.os.Build.VERSION_CODES
-
 buildscript {
     repositories {
         google()
@@ -38,7 +36,7 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.agr541.retroarch"
 
-    compileSdkVersion CUR_DEVELOPMENT
+    compileSdkVersion 36
     ndkVersion "22.0.7026061"
 
     buildFeatures {
@@ -54,8 +52,8 @@ android {
     flavorDimensions "variant"
 
     defaultConfig {
-        minSdk VERSION_CODES.JELLY_BEAN
-        targetSdk VERSION_CODES.CUR_DEVELOPMENT
+        minSdkVersion 16
+        targetSdkVersion 36
 
         externalNativeBuild {
             ndkBuild {
@@ -90,9 +88,9 @@ android {
         }
 
         playStoreNormal {
-            minSdk VERSION_CODE.LOLLIPOP
-            targetSdk VERSION_CODE.CUR_DEVELOPMENT
-            versionName getPlayStoreVersionName2()
+            minSdkVersion 21
+            targetSdkVersion 36
+            versionName getPlayStoreVersionName()
 
             resValue "string", "app_name", "RetroArch"
             buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
@@ -104,8 +102,8 @@ android {
         }
 
         playStorePlus {
-            minSdk VERSION_CODE.O
-            targetSdk VERSION_CODE.CUR_DEVELOPMENT
+            minSdk 21
+            targetSdk 35
             versionName getPlayStoreVersionName2()
 
             applicationIdSuffix '.aarch64'
