@@ -8,13 +8,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:9.2.1'
-        classpath "com.github.triplet.gradle:play-publisher:4.0.0"
+        classpath('com.android.tools.build:gradle:9.2.1')
+        classpath("com.github.triplet.gradle:play-publisher:4.0.0")
     }
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'com.github.triplet.play'
+apply(plugin: 'com.android.application')
+apply(plugin: 'com.github.triplet.play')
 
 allprojects {
     repositories {
@@ -25,13 +25,13 @@ allprojects {
     Properties props = new Properties()
     props.load(new FileInputStream(new File(project.rootDir, "retroarch.properties")))
     props.each { prop ->
-        project.ext.set(prop.key, prop.value)
+        project.extensions.extraProperties.set(prop.key, prop.value)
     }
     def localProps = new File(project.rootDir, "local.properties")
     if(localProps.exists()) {
         props.load(new FileInputStream(localProps))
         props.each { prop ->
-            project.ext.set(prop.key, prop.value)
+            project.extensions.extraProperties.set(prop.key, prop.value)
         }
     }
 }
@@ -80,21 +80,21 @@ android {
         }
     }
 
-    flavorDimensions "variant"
+    flavorDimensions("variant")
 
     defaultConfig {
-        minSdk 16
-        targetSdk 37
+        minSdk = 21
+        targetSdk = 37
 
         externalNativeBuild {
             ndkBuild {
-                arguments "-j${Runtime.runtime.availableProcessors()}", "APP_PLATFORM=android-21"
-                abiFilters "arm64-v8a", "x86_64"
+                arguments("-j${Runtime.runtime.availableProcessors()}", "APP_PLATFORM=android-21")
+                abiFilters("arm64-v8a", "x86_64")
             }
         }
 
         ndk {
-            abiFilters "arm64-v8a", "x86_64"
+            abiFilters("arm64-v8a", "x86_64")
         }
 
         versionName = "${getManifestAttribute("versionName")}_GIT"
@@ -102,84 +102,84 @@ android {
 
     productFlavors {
         normal {
-            resValue "string", "app_name", "RetroArch"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
+            resValue("string", "app_name", "RetroArch")
+            buildConfigField("boolean", "PLAY_STORE_BUILD", "false")
             dimension = "variant"
         }
 
         aarch64 {
             applicationIdSuffix = '.aarch64'
-            resValue "string", "app_name", "RetroArch (AArch64)"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
+            resValue("string", "app_name", "RetroArch (AArch64)")
+            buildConfigField("boolean", "PLAY_STORE_BUILD", "false")
             dimension = "variant"
 
             ndk {
-                abiFilters "arm64-v8a"
+                abiFilters("arm64-v8a")
             }
         }
 
         playStoreNormal {
-            minSdk 21
-            targetSdk 37
+            minSdk = 21
+            targetSdk = 37
             versionName = getPlayStoreVersionNameLocal()
 
-            resValue "string", "app_name", "RetroArch"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
+            resValue("string", "app_name", "RetroArch")
+            buildConfigField("boolean", "PLAY_STORE_BUILD", "true")
             dimension = "variant"
 
             ndk {
-                abiFilters "arm64-v8a"
+                abiFilters("arm64-v8a")
             }
         }
 
         playStorePlus {
-            minSdk 26
-            targetSdk 37
+            minSdk = 26
+            targetSdk = 37
             versionName = getPlayStoreVersionNameLocal()
 
             applicationIdSuffix = '.aarch64'
-            resValue "string", "app_name", "RetroArch Plus"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
+            resValue("string", "app_name", "RetroArch Plus")
+            buildConfigField("boolean", "PLAY_STORE_BUILD", "true")
             dimension = "variant"
 
             ndk {
-                abiFilters "arm64-v8a"
+                abiFilters("arm64-v8a")
             }
         }
     }
 
     sourceSets {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            assets.srcDirs 'assets'
-            java.srcDirs 'src', '../phoenix-common/src', '../../../libretro-common/vfs/saf/src'
-            jniLibs.srcDirs '../phoenix-common/libs'
+            manifest.srcFile('AndroidManifest.xml')
+            assets.srcDirs('assets')
+            java.srcDirs('src', '../phoenix-common/src', '../../../libretro-common/vfs/saf/src')
+            jniLibs.srcDirs('../phoenix-common/libs')
             jni.srcDirs = []
-            res.srcDirs 'res', '../phoenix-common/res'
+            res.srcDirs('res', '../phoenix-common/res')
         }
 
         normal {
-            java.srcDirs '../play-core-stub'
+            java.srcDirs('../play-core-stub')
         }
 
         aarch64 {
-            java.srcDirs '../play-core-stub'
-            res.srcDirs 'res', 'res64'
+            java.srcDirs('../play-core-stub')
+            res.srcDirs('res', 'res64')
         }
 
         playStoreNormal {
-            java.srcDirs '../play-core-impl'
+            java.srcDirs('../play-core-impl')
         }
 
         playStorePlus {
-            java.srcDirs '../play-core-impl'
-            res.srcDirs 'res64'
+            java.srcDirs('../play-core-impl')
+            res.srcDirs('res64')
         }
     }
 
     externalNativeBuild {
         ndkBuild {
-            path '../phoenix-common/jni/Android.mk'
+            path('../phoenix-common/jni/Android.mk')
         }
     }
 
@@ -206,14 +206,14 @@ android {
 }
 
 dependencies {
-    implementation "com.google.android.play:app-update:2.1.0"
-    implementation "com.google.android.play:review:2.0.2"
-    implementation "com.google.android.play:feature-delivery:2.1.0"
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:review:2.0.2")
+    implementation("com.google.android.play:feature-delivery:2.1.0")
 }
 
 def dynamicFeatures = file("dynamic_features.gradle")
 if(dynamicFeatures.exists()) {
-    apply from: "dynamic_features.gradle"
+    apply(from: "dynamic_features.gradle")
 }
 
 if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
