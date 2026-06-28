@@ -1,3 +1,5 @@
+import javax.xml.parsers.DocumentBuilderFactory
+
 buildscript {
     repositories {
         google()
@@ -6,10 +8,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.2'
+        classpath 'com.android.tools.build:gradle:9.2.1'
         classpath "com.github.triplet.gradle:play-publisher:4.0.0"
     }
 }
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
 
 allprojects {
     repositories {
@@ -31,166 +36,12 @@ allprojects {
     }
 }
 
-apply plugin: 'com.android.application'
-
-android {
-    namespace "com.agr541.retroarch"
-
-    compileSdkVersion 36
-    ndkVersion "22.0.7026061"
-
-    buildFeatures {
-        buildConfig true
-    }
-
-    packaging {
-        jniLibs {
-            useLegacyPackaging true
-        }
-    }
-
-    flavorDimensions "variant"
-
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 36
-
-        externalNativeBuild {
-            ndkBuild {
-                arguments "-j${Runtime.runtime.availableProcessors()}", "APP_PLATFORM=android-21"
-                abiFilters "arm64-v8a", "x86_64"
-            }
-        }
-
-        ndk {
-            abiFilters "arm64-v8a", "x86_64"
-        }
-
-        versionName "${getManifestAttribute("versionName")}_GIT"
-    }
-
-    productFlavors {
-        normal {
-            resValue "string", "app_name", "RetroArch"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
-            dimension "variant"
-        }
-
-        aarch64 {
-            applicationIdSuffix '.aarch64'
-            resValue "string", "app_name", "RetroArch (AArch64)"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
-            dimension "variant"
-
-            ndk {
-                abiFilters "arm64-v8a"
-            }
-        }
-
-        playStoreNormal {
-            minSdkVersion 21
-            targetSdkVersion 36
-            versionName getPlayStoreVersionName()
-
-            resValue "string", "app_name", "RetroArch"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
-            dimension "variant"
-
-            ndk {
-                abiFilters "arm64-v8a"
-            }
-        }
-
-        playStorePlus {
-            minSdk 21
-            targetSdk 35
-            versionName getPlayStoreVersionName2()
-
-            applicationIdSuffix '.aarch64'
-            resValue "string", "app_name", "RetroArch Plus"
-            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
-            dimension "variant"
-
-            ndk {
-                abiFilters "arm64-v8a"
-            }
-        }
-    }
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            assets.srcDirs = ['assets']
-            java.srcDirs = ['src', '../phoenix-common/src', '../../../libretro-common/vfs/saf/src']
-            jniLibs.srcDir '../phoenix-common/libs'
-            jni.srcDirs = []
-            res.srcDirs = ['res', '../phoenix-common/res']
-        }
-
-        normal {
-            java.srcDirs += ['../play-core-stub']
-        }
-
-        aarch64 {
-            java.srcDirs += ['../play-core-stub']
-            res.srcDirs = ['res', 'res64']
-        }
-
-        playStoreNormal {
-            java.srcDirs += ['../play-core-impl']
-        }
-
-        playStorePlus {
-            java.srcDirs += ['../play-core-impl']
-            res.srcDirs += ['res64']
-        }
-    }
-
-    externalNativeBuild {
-        ndkBuild {
-            path '../phoenix-common/jni/Android.mk'
-        }
-    }
-
-    signingConfigs {
-        if (project.hasProperty("RELEASE_STORE_FILE")) {
-            release {
-                storeFile file(RELEASE_STORE_FILE)
-                storePassword RELEASE_STORE_PASSWORD
-                keyAlias RELEASE_KEY_ALIAS
-                keyPassword RELEASE_KEY_PASSWORD
-            }
-        }
-    }
-
-    buildTypes {
-        release {
-            if (project.hasProperty("RELEASE_STORE_FILE")) {
-                signingConfig signingConfigs.release
-            } else {
-                signingConfig signingConfigs.debug
-            }
-        }
-    }
-}
-
-dependencies {
-    implementation "com.google.android.play:app-update:2.1.0"
-    implementation "com.google.android.play:review:2.0.2"
-    implementation "com.google.android.play:feature-delivery:2.1.0"
-}
-
-def dynamicFeatures = file("dynamic_features.gradle")
-if(dynamicFeatures.exists()) {
-    apply from: "dynamic_features.gradle"
-}
-
-String getPlayStoreVersionName2() {
+ String getPlayStoreVersionNameLocal() {
     def versionName = getManifestAttribute("versionName")
     return "$versionName"
 }
 
-String getManifestAttribute(String attribute) {
+ String getManifestAttribute(String attribute) {
     def file = new File("${project.projectDir}/AndroidManifest.xml")
 
     def factory = DocumentBuilderFactory.newInstance()
@@ -212,7 +63,158 @@ String getManifestAttribute(String attribute) {
     return null
 }
 
-apply plugin: "com.github.triplet.play"
+android {
+    namespace = "com.agr541.retroarch"
+
+    compileSdk = 37
+    ndkVersion = "22.0.7026061"
+
+    buildFeatures {
+        buildConfig = true
+        resValues = true
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    flavorDimensions "variant"
+
+    defaultConfig {
+        minSdk 16
+        targetSdk 37
+
+        externalNativeBuild {
+            ndkBuild {
+                arguments "-j${Runtime.runtime.availableProcessors()}", "APP_PLATFORM=android-21"
+                abiFilters "arm64-v8a", "x86_64"
+            }
+        }
+
+        ndk {
+            abiFilters "arm64-v8a", "x86_64"
+        }
+
+        versionName = "${getManifestAttribute("versionName")}_GIT"
+    }
+
+    productFlavors {
+        normal {
+            resValue "string", "app_name", "RetroArch"
+            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
+            dimension = "variant"
+        }
+
+        aarch64 {
+            applicationIdSuffix = '.aarch64'
+            resValue "string", "app_name", "RetroArch (AArch64)"
+            buildConfigField "boolean", "PLAY_STORE_BUILD", "false"
+            dimension = "variant"
+
+            ndk {
+                abiFilters "arm64-v8a"
+            }
+        }
+
+        playStoreNormal {
+            minSdk 21
+            targetSdk 37
+            versionName = getPlayStoreVersionNameLocal()
+
+            resValue "string", "app_name", "RetroArch"
+            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
+            dimension = "variant"
+
+            ndk {
+                abiFilters "arm64-v8a"
+            }
+        }
+
+        playStorePlus {
+            minSdk 26
+            targetSdk 37
+            versionName = getPlayStoreVersionNameLocal()
+
+            applicationIdSuffix = '.aarch64'
+            resValue "string", "app_name", "RetroArch Plus"
+            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
+            dimension = "variant"
+
+            ndk {
+                abiFilters "arm64-v8a"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            assets.srcDirs 'assets'
+            java.srcDirs 'src', '../phoenix-common/src', '../../../libretro-common/vfs/saf/src'
+            jniLibs.srcDirs '../phoenix-common/libs'
+            jni.srcDirs = []
+            res.srcDirs 'res', '../phoenix-common/res'
+        }
+
+        normal {
+            java.srcDirs '../play-core-stub'
+        }
+
+        aarch64 {
+            java.srcDirs '../play-core-stub'
+            res.srcDirs 'res', 'res64'
+        }
+
+        playStoreNormal {
+            java.srcDirs '../play-core-impl'
+        }
+
+        playStorePlus {
+            java.srcDirs '../play-core-impl'
+            res.srcDirs 'res64'
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path '../phoenix-common/jni/Android.mk'
+        }
+    }
+
+    signingConfigs {
+        if (project.hasProperty("RELEASE_STORE_FILE")) {
+            release {
+                storeFile = file(RELEASE_STORE_FILE)
+                storePassword = RELEASE_STORE_PASSWORD
+                keyAlias = RELEASE_KEY_ALIAS
+                keyPassword = RELEASE_KEY_PASSWORD
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig = signingConfigs.release
+            } else {
+                signingConfig = signingConfigs.debug
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation "com.google.android.play:app-update:2.1.0"
+    implementation "com.google.android.play:review:2.0.2"
+    implementation "com.google.android.play:feature-delivery:2.1.0"
+}
+
+def dynamicFeatures = file("dynamic_features.gradle")
+if(dynamicFeatures.exists()) {
+    apply from: "dynamic_features.gradle"
+}
 
 if (project.hasProperty("SERVICE_ACCOUNT_FILE")) {
     play {
