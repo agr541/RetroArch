@@ -83,7 +83,7 @@ android {
     flavorDimensions("variant")
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
         targetSdk = 37
 
         externalNativeBuild {
@@ -119,8 +119,6 @@ android {
         }
 
         playStoreNormal {
-            minSdk = 21
-            targetSdk = 37
             versionName = getPlayStoreVersionNameLocal()
 
             resValue("string", "app_name", "RetroArch")
@@ -133,8 +131,6 @@ android {
         }
 
         playStorePlus {
-            minSdk = 26
-            targetSdk = 37
             versionName = getPlayStoreVersionNameLocal()
 
             resValue("string", "app_name", "RetroArch Plus")
@@ -206,9 +202,11 @@ android {
 }
 
 dependencies {
+
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:review:2.0.2")
     implementation("com.google.android.play:feature-delivery:2.1.0")
+    implementation("androidx.core:core:1.19.0")
 }
 
 def dynamicFeatures = file("dynamic_features.gradle")
