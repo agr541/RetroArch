@@ -1814,7 +1814,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   ""
+   "AVERTO: rapida flagro povas kaŭzi bildan daŭron (\"image persistence\") en kelkaj ekranoj. Uzu ĝin je via propra risko. // Enmeti nigrajn filmerojn inter filmeroj. Povas ege redukti malklarajn movojn (\"motion blur\") imitante la \"scan out\" de CRT, sed kontraŭ brilo."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -7159,6 +7159,14 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_SUBLABEL_ACCESSIBILITY_NARRATOR_SPEECH_SPEED,
    "La rapido de la voĉo por la parolsintezo."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_ACCESSIBILITY_NARRATOR_ENGINE,
+   "Parolsinteza motoro"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_ACCESSIBILITY_NARRATOR_ENGINE,
+   "La parolsinteza datumtraktejo uzata por la rakontilo."
    )
 
 /* Settings > Power Management */
@@ -14336,7 +14344,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_SAVING_RAM_TYPE,
-   "Konservante RAM-specon"
+   "Konservante ĉefmemoran specon"
    )
 MSG_HASH(
    MSG_SAVING_STATE,
