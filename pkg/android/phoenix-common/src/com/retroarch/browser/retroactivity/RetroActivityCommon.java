@@ -53,6 +53,7 @@ import android.os.VibrationEffect;
 import android.os.VibratorManager;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -139,8 +140,14 @@ public class RetroActivityCommon extends NativeActivity
     cleanupSymlinks();
     updateSymlinks();
 
-    registerReceiver(mUsbPermissionReceiver, new IntentFilter(ACTION_USB_PERMISSION), Context.RECEIVER_NOT_EXPORTED);
-    ((InputManager) getSystemService(Context.INPUT_SERVICE))
+      ContextCompat.registerReceiver(
+              this,
+              mUsbPermissionReceiver,
+              new IntentFilter(ACTION_USB_PERMISSION),
+              ContextCompat.RECEIVER_NOT_EXPORTED
+      );
+
+      ((InputManager) getSystemService(Context.INPUT_SERVICE))
             .registerInputDeviceListener(this, null);
     PlayCoreManager.getInstance().onCreate(this);
     super.onCreate(savedInstanceState);
@@ -169,7 +176,6 @@ public class RetroActivityCommon extends NativeActivity
           Uri uri = intent.getData();
           if (uri == null)
             break;
-          if (Build.VERSION.SDK_INT >= 19)
             getContentResolver().takePersistableUriPermission(uri, intent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
           safTreeAdded(uri.toString());
         }
@@ -894,7 +900,7 @@ public class RetroActivityCommon extends NativeActivity
    * @return the list of available cores
    */
   public String[] getAvailableCores() {
-    int id = getResources().getIdentifier("module_names_" + Build.CPU_ABI.replace('-', '_'), "array", getPackageName());
+    int id = getResources().getIdentifier("module_names_" + Build.SUPPORTED_ABIS[0].replace('-', '_'), "array", getPackageName());
 
     String[] returnVal = getResources().getStringArray(id);
     Log.i("RetroActivity", "getAvailableCores: " + Arrays.toString(returnVal));
