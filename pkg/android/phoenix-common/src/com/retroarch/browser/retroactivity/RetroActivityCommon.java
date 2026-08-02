@@ -901,9 +901,7 @@ public class RetroActivityCommon extends NativeActivity
    */
   @SuppressWarnings("deprecation")
   public String[] getAvailableCores() {
-      Log.e("RetroArch", "core array resource id = " + Build.CPU_ABI);
-
-      int id = getResources().getIdentifier("module_names_" + Build.CPU_ABI.replace('-', '_'), "array", getPackageName());
+    int id = getResources().getIdentifier("module_names_" + Build.CPU_ABI.replace('-', '_'), "array", getPackageName());
     String[] returnVal = getResources().getStringArray(id);
     Log.i("RetroActivity", "getAvailableCores: " + Arrays.toString(returnVal));
     return returnVal;
