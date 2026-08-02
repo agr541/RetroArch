@@ -25,11 +25,6 @@ ifneq ($(GIT_VERSION),)
 endif
 
 include $(CLEAR_VARS)
-
-# ----------------------------
-# Architecture flags (UPDATED)
-# ----------------------------
-
 ifeq ($(TARGET_ARCH),arm)
    DEFINES += -DANDROID_ARM -marm
    LOCAL_ARM_MODE := arm
@@ -44,10 +39,11 @@ ifeq ($(TARGET_ARCH),x86_64)
 endif
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-   DEFINES += -DANDROID_ARM_V7
-   ifeq ($(HAVE_NEON),1)
-      DEFINES += -D__ARM_NEON__ -DHAVE_NEON
-   endif
+
+ifeq ($(HAVE_NEON),1)
+	DEFINES += -D__ARM_NEON__ -DHAVE_NEON
+endif
+DEFINES += -DANDROID_ARM_V7
 endif
 
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
@@ -57,10 +53,6 @@ endif
 ifeq ($(TARGET_ARCH),mips)
    DEFINES += -DANDROID_MIPS -D__mips__ -D__MIPSEL__
 endif
-
-# ----------------------------
-# Module
-# ----------------------------
 
 LOCAL_MODULE := retroarch-activity
 

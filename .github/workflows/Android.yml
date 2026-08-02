@@ -17,11 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
-    - name: Set up JDK 17
+    - name: Set up JDK 25
       uses: actions/setup-java@v5
       with:
         distribution: temurin
-        java-version: 17
+        java-version: 25
 
     - name: Restore keystore
       run: |
@@ -50,6 +50,8 @@ jobs:
           -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}" \
           -PSERVICE_ACCOUNT_FILE="play-service-account.json" \
           --no-build-cache
+        find . -iname "*.apk" -exec ls -l "{}" \;
+        find . -iname "*.aab" -exec ls -l "{}" \;
 
 
     - name: Get short SHA
@@ -61,3 +63,5 @@ jobs:
         name: retroarch-play-${{ steps.slug.outputs.sha8 }}
         path: |
           pkg/android/phoenix/build/outputs/bundle/**/*.aab
+          pkg/android/phoenix/build/outputs/apk/**/*.aab
+          pkg/android/phoenix/build/reports/**/*.html
