@@ -39,7 +39,6 @@ jobs:
         cd pkg/android/phoenix
         echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > play-service-account.json
 
-./gradlew clean assembleRelease --no-build-cache
     - name: Upload to Play Internal Testing
       continue-on-error: true
       run: |
