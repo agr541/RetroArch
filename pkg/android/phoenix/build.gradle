@@ -67,20 +67,11 @@ android {
     namespace = "com.agr541.retroarch"
 
     compileSdk = 37
-    ndkVersion = "22.0.7026061"
+    buildToolsVersion "37.0.0"
 
-    buildFeatures {
-        buildConfig = true
-        resValues = true
-    }
+    ndkVersion "29.0.14206865"
 
-    packaging {
-        jniLibs {
-            useLegacyPackaging = true
-        }
-    }
-
-    flavorDimensions("variant")
+  flavorDimensions "variant"
 
     defaultConfig {
         minSdk = 26
@@ -98,6 +89,14 @@ android {
 
         versionName = "${getManifestAttribute("versionName")}_GIT"
     }
+
+  android {
+    packagingOptions {
+      jniLibs {
+        useLegacyPackaging = true
+      }
+    }
+  }
 
     productFlavors {
         normal {
