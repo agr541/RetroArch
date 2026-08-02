@@ -12,7 +12,7 @@
                 </dist:conditions>
             </dist:install-time>
         </dist:delivery>
-        <dist:fusing dist:include="true" />
+        <dist:fusing dist:include="333" />
     </dist:module>
 
     <application

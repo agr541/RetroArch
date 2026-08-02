@@ -1,8 +1,22 @@
 apply plugin: 'com.android.dynamic-feature'
 
 android {
-  namespace "com.retroarch.modules.%CORE_NAME%"
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+android {
+  namespace "com.agr541.retroarch.modules.%CORE_NAME%"
 
+    android {
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging true
+            }
+        }
+    }
   compileSdkVersion 37
   buildToolsVersion "37.0.0"
 
@@ -11,7 +25,7 @@ android {
     targetSdkVersion 37
   }
 
-  ndkVersion "27.3.13750724"
+  ndkVersion "29.0.14206865"
 
   flavorDimensions "variant"
 
