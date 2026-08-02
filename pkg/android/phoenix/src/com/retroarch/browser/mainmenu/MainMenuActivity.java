@@ -152,13 +152,13 @@ public final class MainMenuActivity extends PreferenceActivity
 						}
                     });
             }
-            else
-            {
-					requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-						REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-
-					Log.i("MainMenuActivity", "Requested external storage permissions.");
-            }
+//            else
+//            {
+//					requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+//						REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+//
+//					Log.i("MainMenuActivity", "Requested external storage permissions.");
+//            }
 
 		}
 
