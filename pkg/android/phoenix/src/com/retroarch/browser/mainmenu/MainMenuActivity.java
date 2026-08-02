@@ -60,75 +60,63 @@ public final class MainMenuActivity extends PreferenceActivity
 		return true;
 	}
 
-	public void checkRuntimePermissions()
-	{
-		// The SDK on the user's device >= 30 (Android 11)
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R)
-		{
-			if (!Environment.isExternalStorageManager())
-			{
-				checkPermissions = true;
-				showMessageOKCancel("RetroArch requires All Files Access permission to scan and load game ROMs from your storage.",
-					new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which)
-						{
-							if (which == AlertDialog.BUTTON_POSITIVE)
-							{
-								try
-								{
-									Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-									intent.addCategory("android.intent.category.DEFAULT");
-									intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
-									startActivityForResult(intent, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-								}
-								catch (Exception e)
-								{
-									Intent intent = new Intent();
-									intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-									startActivityForResult(intent, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-								}
-							}
-						}
-					});
-			}
-		}
-		// The SDK on the user's device >= 23 (Android 6)
-		else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-						{
-							if (which == AlertDialog.BUTTON_POSITIVE)
-							{
-								try
-								{
-									Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-									intent.addCategory("android.intent.category.DEFAULT");
-									intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
-									startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE);
-								}
-								catch (Exception e)
-								{
-									Intent intent = new Intent();
-									intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-									startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE);
-								}
-							}
-						}
+	public void checkRuntimePermissions() {
+        // The SDK on the user's device >= 30 (Android 11)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                checkPermissions = true;
+                showMessageOKCancel("RetroArch requires All Files Access permission to scan and load game ROMs from your storage.",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == AlertDialog.BUTTON_POSITIVE) {
+                                    try {
+                                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                                        intent.addCategory("android.intent.category.DEFAULT");
+                                        intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
+                                        startActivityForResult(intent, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                    } catch (Exception e) {
+                                        Intent intent = new Intent();
+                                        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                        startActivityForResult(intent, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                    }
+                                }
+                            }
+                        });
+            }
+        }
+        // The SDK on the user's device >= 23 (Android 6)
+        else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            showMessageOKCancel("RetroArch requires All Files Access permission to scan and load game ROMs from your storage.",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == AlertDialog.BUTTON_POSITIVE) {
+                                try {
+                                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                                    intent.addCategory("android.intent.category.DEFAULT");
+                                    intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
+                                    startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE);
+                                } catch (Exception e) {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                    startActivityForResult(intent, REQUEST_CODE_MANAGE_STORAGE);
+                                }
+                            }
+                        }
+                    });
+        }
 
+		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
+            List<String> permissionsNeeded = new ArrayList<String>();
+            final List<String> permissionsList = new ArrayList<String>();
 
-
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-		{
-			List<String> permissionsNeeded = new ArrayList<String>();
-			final List<String> permissionsList = new ArrayList<String>();
-
-			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-			{
-				if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_IMAGES))
-					permissionsNeeded.add("Images");
-				if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_VIDEO))
-					permissionsNeeded.add("Video");
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_IMAGES))
+                    permissionsNeeded.add("Images");
+                if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_VIDEO))
+                    permissionsNeeded.add("Video");
 				if (!addPermission(permissionsList, Manifest.permission.READ_MEDIA_AUDIO))
 					permissionsNeeded.add("Audio");
 			}

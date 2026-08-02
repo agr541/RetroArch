@@ -67,11 +67,12 @@ android {
     namespace = "com.agr541.retroarch"
 
     compileSdk = 37
-    buildToolsVersion "37.0.0"
+    buildToolsVersion = "37.0.0"
 
-    ndkVersion "29.0.14206865"
+    ndkVersion = "29.0.14206865"
+    android.buildFeatures.buildConfig = true
 
-  flavorDimensions "variant"
+    flavorDimensions += "variant"
 
     defaultConfig {
         minSdk = 26
