@@ -70,9 +70,24 @@ android {
     buildToolsVersion = "37.0.0"
 
     ndkVersion = "29.0.14206865"
-    android.buildFeatures.buildConfig = true
 
-    flavorDimensions += "variant"
+    buildFeatures {
+
+        buildConfig = true
+        resValues = true
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+    packaging {
+
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+    flavorDimensions("variant")
 
     defaultConfig {
         minSdk = 26
