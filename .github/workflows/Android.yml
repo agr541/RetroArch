@@ -39,17 +39,18 @@ jobs:
         cd pkg/android/phoenix
         echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > play-service-account.json
 
-
+./gradlew clean assembleRelease --no-build-cache
     - name: Upload to Play Internal Testing
       continue-on-error: true
       run: |
         cd pkg/android/phoenix
-        ./gradlew publishPlayStoreNormalReleaseBundle \
+        ./gradlew clean assembleRelease publishPlayStoreNormalReleaseBundle \
           -Pandroid.injected.signing.store.file=../release.keystore \
           -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_PASSWORD }}" \
           -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
           -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}" \
-          -PSERVICE_ACCOUNT_FILE="play-service-account.json"
+          -PSERVICE_ACCOUNT_FILE="play-service-account.json" \
+          --no-build-cache"
 
 
     - name: Get short SHA
