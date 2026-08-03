@@ -81,12 +81,7 @@ android {
             useLegacyPackaging = true
         }
     }
-    packaging {
 
-        jniLibs {
-            useLegacyPackaging = true
-        }
-    }
     flavorDimensions("variant")
 
     defaultConfig {
@@ -136,7 +131,7 @@ android {
             versionName = getPlayStoreVersionNameLocal()
 
             resValue("string", "app_name", "RetroArch")
-            buildConfigField("boolean", "PLAY_STORE_BUILD", "true")
+            buildConfigField("boolean", "PLAY_STORE_BUILD", "false")
             dimension = "variant"
 
         }
@@ -145,7 +140,7 @@ android {
             versionName = getPlayStoreVersionNameLocal()
 
             resValue("string", "app_name", "RetroArch Plus")
-            buildConfigField("boolean", "PLAY_STORE_BUILD", "true")
+            buildConfigField("boolean", "PLAY_STORE_BUILD", "false")
             dimension = "variant"
 
         }
@@ -171,12 +166,12 @@ android {
         }
 
         playStoreNormal {
-            java.srcDirs('../play-core-impl')
+            java.srcDirs('../play-core-stub')
             res.srcDirs('res', 'res64')
         }
 
         playStorePlus {
-            java.srcDirs('../play-core-impl')
+            java.srcDirs('../play-core-stub')
             res.srcDirs('res64')
         }
     }
