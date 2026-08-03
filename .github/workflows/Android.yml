@@ -43,7 +43,7 @@ jobs:
       continue-on-error: true
       run: |
         cd pkg/android/phoenix
-        ./gradlew clean assembleRelease publishPlayStoreNormalReleaseBundle \
+        ./gradlew clean assembleRelease publishNormalReleaseBundle \
           -Pandroid.injected.signing.store.file=../release.keystore \
           -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_PASSWORD }}" \
           -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \

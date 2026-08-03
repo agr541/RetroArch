@@ -8,7 +8,7 @@ android {
     }
 }
 android {
-  namespace "com.agr541.retroarch.modules.%CORE_NAME%"
+  namespace "com.retroarch.modules.%CORE_NAME%"
 
     android {
         packagingOptions {
